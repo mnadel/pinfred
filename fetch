@@ -3,6 +3,7 @@
 import os
 import sys
 import json
+import datetime
 import urllib.request
 import xml.etree.ElementTree as ET
 
@@ -37,6 +38,12 @@ for elem in tree:
         "arg": url,
         "match": f"{url} {title} {subtitle}"
     })
+
+items.append({
+    "title": "Last Refresh",
+    "subtitle": datetime.datetime.now().strftime("%a %b %m %Y %-I:%M %p"),
+    "match": "#info last refresh"
+})
 
 with open("bookmarks.json", "w") as f:
     f.write(json.dumps({"items":items}))
