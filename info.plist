@@ -105,7 +105,7 @@
 				<key>runningsubtext</key>
 				<string></string>
 				<key>script</key>
-				<string>cat ./bookmarks.json</string>
+				<string>cat bookmarks.json</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
@@ -113,7 +113,7 @@
 				<key>subtext</key>
 				<string></string>
 				<key>title</key>
-				<string>Search your Pins</string>
+				<string>Search your Pins...</string>
 				<key>type</key>
 				<integer>11</integer>
 				<key>withspace</key>
@@ -136,7 +136,7 @@
 				<key>subtext</key>
 				<string></string>
 				<key>text</key>
-				<string>Refresh your Pins...</string>
+				<string>Refresh your Pins</string>
 				<key>withspace</key>
 				<false/>
 			</dict>
@@ -198,9 +198,9 @@
 		<key>29FE8E28-6834-4FEC-AC57-26BE2C097FA2</key>
 		<dict>
 			<key>xpos</key>
-			<real>45</real>
+			<real>40</real>
 			<key>ypos</key>
-			<real>170</real>
+			<real>155</real>
 		</dict>
 		<key>361321FA-4559-474D-A840-C322741C4F8F</key>
 		<dict>
@@ -221,7 +221,7 @@
 			<key>xpos</key>
 			<real>370</real>
 			<key>ypos</key>
-			<real>170</real>
+			<real>155</real>
 		</dict>
 		<key>D5285D37-4758-4EE9-85B7-1C364E71D4D7</key>
 		<dict>
