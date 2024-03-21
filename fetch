@@ -1,0 +1,43 @@
+#!/usr/bin/env python3
+
+import os
+import sys
+import json
+import urllib.request
+import xml.etree.ElementTree as ET
+
+if "PINBOARD_TOKEN" not in os.environ or not os.environ["PINBOARD_TOKEN"]:
+    sys.stderr.write("missing auth token\n")
+    sys.exit(1)
+
+url = f"https://api.pinboard.in/v1/posts/all?auth_token={os.environ['PINBOARD_TOKEN']}"
+
+try:
+    req = urllib.request.urlopen(url, timeout=10)
+    tree = ET.fromstring(req.read().decode("utf-8"))
+except urllib.error.HTTPError as e:
+    sys.stderr.write(f"error fetching code={e.code}, url={url}, msg={e.read()}\n")
+    sys.exit(2)
+
+items = []
+
+for elem in tree:
+    node = elem.attrib
+
+    url = node["href"]
+    title = node["description"]
+    tags = node["tag"].split(" ")
+
+    tag = " ".join([f"#{x}" for x in tags])
+    subtitle = url if not tags else f"{tag} {url}"
+
+    items.append({
+        "title": title,
+        "subtitle": subtitle,
+        "arg": url,
+        "match": f"{url} {title} {subtitle}"
+    })
+
+with open("bookmarks.json", "w") as f:
+    f.write(json.dumps({"items":items}))
+
