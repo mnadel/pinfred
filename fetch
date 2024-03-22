@@ -31,7 +31,17 @@ except urllib.error.HTTPError as e:
     log(f"error fetching code={e.code}, url={url}, msg={e.read()}")
     sys.exit(2)
 
-items = []
+# these should match fetch.json
+items = [{
+    "title": "Last Refresh",
+    "subtitle": datetime.datetime.now().strftime(date_format),
+    "match": "#debug last refresh",
+    "valid": False
+}, {
+    "title": "Refresh your pins",
+    "arg": "refresh",
+    "match": "#debug refresh",
+}]
 
 for elem in tree:
     node = elem.attrib
@@ -50,13 +60,5 @@ for elem in tree:
         "match": f"{url} {title} {subtitle}"
     })
 
-items.append({
-    "title": "Last Refresh",
-    "subtitle": datetime.datetime.now().strftime(date_format),
-    "match": "#debug last refresh",
-    "valid": False
-})
-
 with open("bookmarks.json", "w") as f:
     f.write(json.dumps({"items":items}))
-

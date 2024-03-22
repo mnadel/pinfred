@@ -225,11 +225,11 @@ fi</string>
 				<key>argumenttype</key>
 				<integer>2</integer>
 				<key>keyword</key>
-				<string>pinfresh</string>
+				<string>pinfetch</string>
 				<key>subtext</key>
 				<string></string>
 				<key>text</key>
-				<string>Refresh your Pins</string>
+				<string>Fetch your Pins</string>
 				<key>withspace</key>
 				<false/>
 			</dict>

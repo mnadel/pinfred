@@ -2,14 +2,14 @@
     "items":
     [
         {
-            "title": "Fetch your pins",
+            "title": "Fetch your Pins",
             "arg": "fetch",
             "match": "fetch a b c d e f g h i j k l m n o p q r s t u v w x y z"
         },
         {
-            "title": "Last Refresh",
-            "subtitle": "Type 'fetch' to fetch your pins",
-            "match": "#debug last refresh",
+            "title": "Last Fetch",
+            "subtitle": "Search 'fetch' to fetch your Pins",
+            "match": "#debug last fetch",
             "valid": false
         }
     ]
