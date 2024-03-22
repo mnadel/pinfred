@@ -179,7 +179,7 @@ fi</string>
 						<key>matchmode</key>
 						<integer>0</integer>
 						<key>matchstring</key>
-						<string>fetch</string>
+						<string>pins://fetch</string>
 						<key>outputlabel</key>
 						<string>fetch</string>
 						<key>uid</key>

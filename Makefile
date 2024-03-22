@@ -1,2 +1,2 @@
 package: 
-	zip "Pins.alfredworkflow" *
+	zip "Pins.alfredworkflow" fetch fetch.json icon.png info.plist
