@@ -10,7 +10,7 @@
 		<array>
 			<dict>
 				<key>destinationuid</key>
-				<string>C39FDE93-7F8A-4DF0-B317-6019C21CFB44</string>
+				<string>55E00529-28FB-47AB-B063-270ECD91DF99</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -32,11 +32,49 @@
 				<false/>
 			</dict>
 		</array>
+		<key>55E00529-28FB-47AB-B063-270ECD91DF99</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>58AE9976-96DE-49E4-AAF4-26EDE604672C</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>sourceoutputuid</key>
+				<string>CEE166A2-DA5A-490E-B639-0C6A1ECC6BBA</string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>C39FDE93-7F8A-4DF0-B317-6019C21CFB44</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
 		<key>5B530577-97D6-4560-BA49-B0C405AED2F8</key>
 		<array>
 			<dict>
 				<key>destinationuid</key>
 				<string>D5285D37-4758-4EE9-85B7-1C364E71D4D7</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>665937E4-4EF7-460A-A446-E2F97BA380C1</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>5B530577-97D6-4560-BA49-B0C405AED2F8</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -59,21 +97,19 @@
 		<dict>
 			<key>config</key>
 			<dict>
-				<key>browser</key>
-				<string></string>
-				<key>skipqueryencode</key>
-				<false/>
-				<key>skipvarencode</key>
-				<false/>
-				<key>spaces</key>
-				<string></string>
-				<key>url</key>
-				<string>{query}</string>
+				<key>externaltriggerid</key>
+				<string>fetch-bookmarks</string>
+				<key>passinputasargument</key>
+				<true/>
+				<key>passvariables</key>
+				<true/>
+				<key>workflowbundleid</key>
+				<string>self</string>
 			</dict>
 			<key>type</key>
-			<string>alfred.workflow.action.openurl</string>
+			<string>alfred.workflow.output.callexternaltrigger</string>
 			<key>uid</key>
-			<string>C39FDE93-7F8A-4DF0-B317-6019C21CFB44</string>
+			<string>58AE9976-96DE-49E4-AAF4-26EDE604672C</string>
 			<key>version</key>
 			<integer>1</integer>
 		</dict>
@@ -93,7 +129,7 @@
 				<key>escaping</key>
 				<integer>102</integer>
 				<key>keyword</key>
-				<string>pin</string>
+				<string>pins</string>
 				<key>queuedelaycustom</key>
 				<integer>3</integer>
 				<key>queuedelayimmediatelyinitially</key>
@@ -105,7 +141,11 @@
 				<key>runningsubtext</key>
 				<string></string>
 				<key>script</key>
-				<string>cat bookmarks.json</string>
+				<string>if [ -f bookmarks.json ]; then
+	cat bookmarks.json
+else
+	cat fetch.json
+fi</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
@@ -125,6 +165,59 @@
 			<string>29FE8E28-6834-4FEC-AC57-26BE2C097FA2</string>
 			<key>version</key>
 			<integer>3</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>conditions</key>
+				<array>
+					<dict>
+						<key>inputstring</key>
+						<string>{query}</string>
+						<key>matchcasesensitive</key>
+						<false/>
+						<key>matchmode</key>
+						<integer>0</integer>
+						<key>matchstring</key>
+						<string>fetch</string>
+						<key>outputlabel</key>
+						<string>fetch</string>
+						<key>uid</key>
+						<string>CEE166A2-DA5A-490E-B639-0C6A1ECC6BBA</string>
+					</dict>
+				</array>
+				<key>elselabel</key>
+				<string>else</string>
+				<key>hideelse</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.conditional</string>
+			<key>uid</key>
+			<string>55E00529-28FB-47AB-B063-270ECD91DF99</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>browser</key>
+				<string></string>
+				<key>skipqueryencode</key>
+				<false/>
+				<key>skipvarencode</key>
+				<false/>
+				<key>spaces</key>
+				<string></string>
+				<key>url</key>
+				<string>{query}</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.openurl</string>
+			<key>uid</key>
+			<string>C39FDE93-7F8A-4DF0-B317-6019C21CFB44</string>
+			<key>version</key>
+			<integer>1</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -179,6 +272,8 @@
 				<false/>
 				<key>variables</key>
 				<dict>
+					<key>DATE_FORMAT</key>
+					<string>{var:date_format}</string>
 					<key>PINBOARD_TOKEN</key>
 					<string>{var:api_token}</string>
 				</dict>
@@ -187,6 +282,21 @@
 			<string>alfred.workflow.utility.argument</string>
 			<key>uid</key>
 			<string>5B530577-97D6-4560-BA49-B0C405AED2F8</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>availableviaurlhandler</key>
+				<false/>
+				<key>triggerid</key>
+				<string>fetch-bookmarks</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.trigger.external</string>
+			<key>uid</key>
+			<string>665937E4-4EF7-460A-A446-E2F97BA380C1</string>
 			<key>version</key>
 			<integer>1</integer>
 		</dict>
@@ -209,26 +319,47 @@
 			<key>ypos</key>
 			<real>320</real>
 		</dict>
+		<key>55E00529-28FB-47AB-B063-270ECD91DF99</key>
+		<dict>
+			<key>xpos</key>
+			<real>240</real>
+			<key>ypos</key>
+			<real>175</real>
+		</dict>
+		<key>58AE9976-96DE-49E4-AAF4-26EDE604672C</key>
+		<dict>
+			<key>xpos</key>
+			<real>370</real>
+			<key>ypos</key>
+			<real>70</real>
+		</dict>
 		<key>5B530577-97D6-4560-BA49-B0C405AED2F8</key>
 		<dict>
 			<key>xpos</key>
 			<real>245</real>
 			<key>ypos</key>
-			<real>350</real>
+			<real>425</real>
+		</dict>
+		<key>665937E4-4EF7-460A-A446-E2F97BA380C1</key>
+		<dict>
+			<key>xpos</key>
+			<real>50</real>
+			<key>ypos</key>
+			<real>475</real>
 		</dict>
 		<key>C39FDE93-7F8A-4DF0-B317-6019C21CFB44</key>
 		<dict>
 			<key>xpos</key>
 			<real>370</real>
 			<key>ypos</key>
-			<real>155</real>
+			<real>240</real>
 		</dict>
 		<key>D5285D37-4758-4EE9-85B7-1C364E71D4D7</key>
 		<dict>
 			<key>xpos</key>
 			<real>370</real>
 			<key>ypos</key>
-			<real>320</real>
+			<real>395</real>
 		</dict>
 	</dict>
 	<key>userconfigurationconfig</key>
@@ -253,6 +384,27 @@
 			<string>textfield</string>
 			<key>variable</key>
 			<string>api_token</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>%a %b %m %Y %-I:%M %p</string>
+				<key>placeholder</key>
+				<string></string>
+				<key>required</key>
+				<false/>
+				<key>trim</key>
+				<true/>
+			</dict>
+			<key>description</key>
+			<string>Format used for debug info (search bookmarks for #debug)</string>
+			<key>label</key>
+			<string>Debug info date format</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>date_format</string>
 		</dict>
 	</array>
 	<key>version</key>
