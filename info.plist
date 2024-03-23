@@ -98,7 +98,7 @@
 			<key>config</key>
 			<dict>
 				<key>externaltriggerid</key>
-				<string>fetch-bookmarks</string>
+				<string>refresh-bookmarks</string>
 				<key>passinputasargument</key>
 				<true/>
 				<key>passvariables</key>
@@ -129,7 +129,7 @@
 				<key>escaping</key>
 				<integer>102</integer>
 				<key>keyword</key>
-				<string>pins</string>
+				<string>{var:keyword_pins}</string>
 				<key>queuedelaycustom</key>
 				<integer>3</integer>
 				<key>queuedelayimmediatelyinitially</key>
@@ -179,9 +179,9 @@ fi</string>
 						<key>matchmode</key>
 						<integer>0</integer>
 						<key>matchstring</key>
-						<string>pins://fetch</string>
+						<string>pins://refresh</string>
 						<key>outputlabel</key>
-						<string>fetch</string>
+						<string>refresh</string>
 						<key>uid</key>
 						<string>CEE166A2-DA5A-490E-B639-0C6A1ECC6BBA</string>
 					</dict>
@@ -225,11 +225,11 @@ fi</string>
 				<key>argumenttype</key>
 				<integer>2</integer>
 				<key>keyword</key>
-				<string>pinfetch</string>
+				<string>{var:keyword_refresh}</string>
 				<key>subtext</key>
 				<string></string>
 				<key>text</key>
-				<string>Fetch your Pins</string>
+				<string>Refresh your Pins</string>
 				<key>withspace</key>
 				<false/>
 			</dict>
@@ -291,7 +291,7 @@ fi</string>
 				<key>availableviaurlhandler</key>
 				<false/>
 				<key>triggerid</key>
-				<string>fetch-bookmarks</string>
+				<string>refresh-bookmarks</string>
 			</dict>
 			<key>type</key>
 			<string>alfred.workflow.trigger.external</string>
@@ -345,7 +345,7 @@ fi</string>
 			<key>xpos</key>
 			<real>50</real>
 			<key>ypos</key>
-			<real>475</real>
+			<real>470</real>
 		</dict>
 		<key>C39FDE93-7F8A-4DF0-B317-6019C21CFB44</key>
 		<dict>
@@ -405,6 +405,48 @@ fi</string>
 			<string>textfield</string>
 			<key>variable</key>
 			<string>date_format</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>pins</string>
+				<key>placeholder</key>
+				<string></string>
+				<key>required</key>
+				<false/>
+				<key>trim</key>
+				<true/>
+			</dict>
+			<key>description</key>
+			<string>Keyword to activate search</string>
+			<key>label</key>
+			<string>Pins Keyword</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>keyword_pins</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>pinfresh</string>
+				<key>placeholder</key>
+				<string></string>
+				<key>required</key>
+				<false/>
+				<key>trim</key>
+				<true/>
+			</dict>
+			<key>description</key>
+			<string>Keyword to activate a refresh</string>
+			<key>label</key>
+			<string>Refresh Keyword</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>keyword_refresh</string>
 		</dict>
 	</array>
 	<key>version</key>

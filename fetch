@@ -12,10 +12,14 @@ def log(msg):
     sys.stderr.write("\n")
     sys.stderr.flush()
 
-date_format = "%a %b %m %Y %-I:%M %p"
+DATE_FORMAT = "%a %b %m %Y %-I:%M %p"
+REFRESH_URL = "pins://refresh"
+
+if "REFRESH_URL" in os.environ and os.environ["REFRESH_URL"]:
+    REFRESH_URL = os.environ["REFRESH_URL"]
 
 if "DATE_FORMAT" in os.environ and os.environ["DATE_FORMAT"]:
-    date_format = os.environ["DATE_FORMAT"]
+    DATE_FORMAT = os.environ["DATE_FORMAT"]
 
 if "PINBOARD_TOKEN" not in os.environ or not os.environ["PINBOARD_TOKEN"]:
     log("missing auth token")
@@ -35,11 +39,11 @@ except urllib.error.HTTPError as e:
 # these below are used when we have fetched at least once, but the user wants to refresh them
 items = [{
     "title": "Refresh Your Pins",
-    "arg": "pins://fetch",
+    "arg": REFRESH_URL,
     "match": "#debug refresh your pins fetch",
 }, {
     "title": "Last Refresh",
-    "subtitle": datetime.datetime.now().strftime(date_format),
+    "subtitle": datetime.datetime.now().strftime(DATE_FORMAT),
     "match": "#debug last refresh fetch",
     "valid": False
 }]
