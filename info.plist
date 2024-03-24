@@ -3,7 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>bundleid</key>
-	<string>org.nadel.alfred.pins</string>
+	<string>org.nadel.alfred.pinfred</string>
+	<key>category</key>
+	<string>Productivity</string>
 	<key>connections</key>
 	<dict>
 		<key>29FE8E28-6834-4FEC-AC57-26BE2C097FA2</key>
@@ -91,7 +93,7 @@
 	<key>disabled</key>
 	<false/>
 	<key>name</key>
-	<string>Pins</string>
+	<string>Pinfred</string>
 	<key>objects</key>
 	<array>
 		<dict>
@@ -389,27 +391,6 @@ fi</string>
 			<key>config</key>
 			<dict>
 				<key>default</key>
-				<string>%a %b %m %Y %-I:%M %p</string>
-				<key>placeholder</key>
-				<string></string>
-				<key>required</key>
-				<false/>
-				<key>trim</key>
-				<true/>
-			</dict>
-			<key>description</key>
-			<string>Format used for debug info (search bookmarks for #debug)</string>
-			<key>label</key>
-			<string>Debug info date format</string>
-			<key>type</key>
-			<string>textfield</string>
-			<key>variable</key>
-			<string>date_format</string>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>default</key>
 				<string>pins</string>
 				<key>placeholder</key>
 				<string></string>
@@ -448,10 +429,31 @@ fi</string>
 			<key>variable</key>
 			<string>keyword_refresh</string>
 		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>%a %b %m %Y %-I:%M %p</string>
+				<key>placeholder</key>
+				<string></string>
+				<key>required</key>
+				<false/>
+				<key>trim</key>
+				<true/>
+			</dict>
+			<key>description</key>
+			<string>Format used for debug info (search bookmarks for #debug)</string>
+			<key>label</key>
+			<string>Debug info date format</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>date_format</string>
+		</dict>
 	</array>
 	<key>version</key>
 	<string>1.0</string>
 	<key>webaddress</key>
-	<string>https://github.com/mnadel/pins</string>
+	<string>https://github.com/mnadel/pinfred</string>
 </dict>
 </plist>

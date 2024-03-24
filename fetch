@@ -40,11 +40,11 @@ except urllib.error.HTTPError as e:
 items = [{
     "title": "Refresh Your Pins",
     "arg": REFRESH_URL,
-    "match": "#debug refresh your pins fetch",
+    "match": "@debug refresh your pins fetch",
 }, {
     "title": "Last Refresh",
     "subtitle": datetime.datetime.now().strftime(DATE_FORMAT),
-    "match": "#debug last refresh fetch",
+    "match": "@debug last refresh fetch",
     "valid": False
 }]
 

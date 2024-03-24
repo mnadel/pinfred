@@ -4,12 +4,12 @@
         {
             "title": "Fetch Your Pins",
             "arg": "pins://refresh",
-            "match": "#debug fetch refresh a b c d e f g h i j k l m n o p q r s t u v w x y z"
+            "match": "@debug fetch refresh a b c d e f g h i j k l m n o p q r s t u v w x y z"
         },
         {
             "title": "Last Refresh",
             "subtitle": "Search 'fetch' to fetch your Pins",
-            "match": "#debug last refresh fetch",
+            "match": "@debug last refresh fetch",
             "valid": false
         }
     ]
