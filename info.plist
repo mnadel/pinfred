@@ -146,6 +146,9 @@
 				<string>if [ -f bookmarks.json ]; then
 	cat bookmarks.json
 else
+	if [ ! -f fetch.json ]; then
+		./fetch --generate
+	fi
 	cat fetch.json
 fi</string>
 				<key>scriptargtype</key>

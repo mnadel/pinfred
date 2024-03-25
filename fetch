@@ -13,13 +13,38 @@ def log(msg):
     sys.stderr.flush()
 
 DATE_FORMAT = "%a %b %m %Y %-I:%M %p"
-REFRESH_URL = "pins://refresh"
+if "DATE_FORMAT" in os.environ and os.environ["DATE_FORMAT"]:
+    DATE_FORMAT = os.environ["DATE_FORMAT"]
 
+REFRESH_URL = "pins://refresh"
 if "REFRESH_URL" in os.environ and os.environ["REFRESH_URL"]:
     REFRESH_URL = os.environ["REFRESH_URL"]
 
-if "DATE_FORMAT" in os.environ and os.environ["DATE_FORMAT"]:
-    DATE_FORMAT = os.environ["DATE_FORMAT"]
+REFRESH_ITEM = {
+    "title": "Refresh Your Pins",
+    "arg": REFRESH_URL,
+    "match": "@debug refresh your pins fetch",
+}
+
+LAST_ITEM = {
+    "title": "Last Refresh",
+    "subtitle": datetime.datetime.now().strftime(DATE_FORMAT),
+    "match": "@debug last refresh fetch",
+    "valid": False
+}
+
+DEFAULT_ITEMS = [REFRESH_ITEM, LAST_ITEM]
+
+if len(sys.argv) == 2 and sys.argv[1] == "--generate":
+    REFRESH_ITEM["title"] = "Fetch Your Pins"
+    # match on just about anything they type
+    REFRESH_ITEM["match"] = "@debug fetch refresh a b c d e f g h i j k l m n o p q r s t u v w x y z"
+    LAST_ITEM["subtitle"] = "Search 'fetch' to fetch your Pins"
+
+    with open("fetch.json", "w") as f:
+        f.write(json.dumps({"items": DEFAULT_ITEMS}))
+
+    sys.exit(0)
 
 if "PINBOARD_TOKEN" not in os.environ or not os.environ["PINBOARD_TOKEN"]:
     log("missing auth token")
@@ -35,18 +60,7 @@ except urllib.error.HTTPError as e:
     log(f"error fetching code={e.code}, url={url}, msg={e.read()}")
     sys.exit(2)
 
-# these should (roughly) match fetch.json, which is used when we've yet to fetch the bookmarks
-# these below are used when we have fetched at least once, but the user wants to refresh them
-items = [{
-    "title": "Refresh Your Pins",
-    "arg": REFRESH_URL,
-    "match": "@debug refresh your pins fetch",
-}, {
-    "title": "Last Refresh",
-    "subtitle": datetime.datetime.now().strftime(DATE_FORMAT),
-    "match": "@debug last refresh fetch",
-    "valid": False
-}]
+items = DEFAULT_ITEMS
 
 for elem in tree:
     node = elem.attrib
