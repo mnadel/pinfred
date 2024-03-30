@@ -145,11 +145,28 @@
 				<key>script</key>
 				<string>if [ -f bookmarks.json ]; then
 	cat bookmarks.json
-else
-	if [ ! -f fetch.json ]; then
-		./fetch --generate
+fi
+
+# trigger refresh
+osascript fetch.applescript
+
+# wait up to 2 seconds; above call is async
+#
+sleeps=0
+
+while [ ! -f bookmarks.json ]; do
+	if [ $sleeps -lt 7 ]; then
+		sleep 0.25
+		sleeps=$((sleeps + 1))
 	fi
+done
+
+if [ ! -f bookmarks.json ]; then
+	# if still no dice, generate and use sentinel
+	./fetch --generate &gt; fetch.json
 	cat fetch.json
+else
+	cat bookmarks.json
 fi</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
@@ -253,13 +270,13 @@ fi</string>
 				<key>escaping</key>
 				<integer>102</integer>
 				<key>script</key>
-				<string></string>
+				<string>./fetch &gt; bookmarks.json</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
-				<string>fetch</string>
+				<string></string>
 				<key>type</key>
-				<integer>8</integer>
+				<integer>11</integer>
 			</dict>
 			<key>type</key>
 			<string>alfred.workflow.action.script</string>
@@ -307,7 +324,11 @@ fi</string>
 		</dict>
 	</array>
 	<key>readme</key>
-	<string></string>
+	<string># Changelog
+
+## v1.1
+
+We'll now try fetching your Pins automatically on first triggering.</string>
 	<key>uidata</key>
 	<dict>
 		<key>29FE8E28-6834-4FEC-AC57-26BE2C097FA2</key>
@@ -445,7 +466,7 @@ fi</string>
 				<true/>
 			</dict>
 			<key>description</key>
-			<string>Format used for debug info (search bookmarks for #debug)</string>
+			<string>Format used for debug info (search bookmarks for @debug)</string>
 			<key>label</key>
 			<string>Debug info date format</string>
 			<key>type</key>
@@ -455,7 +476,7 @@ fi</string>
 		</dict>
 	</array>
 	<key>version</key>
-	<string>1.0</string>
+	<string>1.1</string>
 	<key>webaddress</key>
 	<string>https://github.com/mnadel/pinfred</string>
 </dict>

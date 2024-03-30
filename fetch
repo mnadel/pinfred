@@ -41,8 +41,7 @@ if len(sys.argv) == 2 and sys.argv[1] == "--generate":
     REFRESH_ITEM["match"] = "@debug fetch refresh a b c d e f g h i j k l m n o p q r s t u v w x y z"
     LAST_ITEM["subtitle"] = "Search 'fetch' to fetch your Pins"
 
-    with open("fetch.json", "w") as f:
-        f.write(json.dumps({"items": DEFAULT_ITEMS}))
+    print(json.dumps({"items": DEFAULT_ITEMS}))
 
     sys.exit(0)
 
@@ -79,5 +78,4 @@ for elem in tree:
         "match": f"{url} {title} {subtitle}"
     })
 
-with open("bookmarks.json", "w") as f:
-    f.write(json.dumps({"items":items}))
+print(json.dumps({"items": items}))
