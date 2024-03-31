@@ -151,15 +151,15 @@ fi
 # trigger refresh by invoking this workflow via applescript
 osascript fetch.applescript
 
-# wait up to 2 seconds (above call is async)
+# wait up to 2 seconds (8 * 0.25), as above call is async
 #
 sleeps=0
+max_sleeps=8
+sleep_time=0.25
 
-while [ ! -f bookmarks.json ]; do
-	if [ ${sleeps} -lt 8 ]; then
-		sleep 0.25
-		sleeps=$((sleeps + 1))
-	fi
+while [ ! -f bookmarks.json ] &amp;&amp; [ ${sleeps} -lt ${max_sleeps} ]; then
+	sleep ${sleep_time}
+	((sleeps = sleeps + 1))
 done
 
 if [ -f bookmarks.json ]; then
