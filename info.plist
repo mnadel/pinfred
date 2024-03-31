@@ -145,28 +145,29 @@
 				<key>script</key>
 				<string>if [ -f bookmarks.json ]; then
 	cat bookmarks.json
+	exit 0
 fi
 
-# trigger refresh
+# trigger refresh by invoking this workflow via applescript
 osascript fetch.applescript
 
-# wait up to 2 seconds; above call is async
+# wait up to 2 seconds (above call is async)
 #
 sleeps=0
 
 while [ ! -f bookmarks.json ]; do
-	if [ $sleeps -lt 7 ]; then
+	if [ ${sleeps} -lt 8 ]; then
 		sleep 0.25
 		sleeps=$((sleeps + 1))
 	fi
 done
 
-if [ ! -f bookmarks.json ]; then
+if [ -f bookmarks.json ]; then
+	cat bookmarks.json
+else
 	# if still no dice, generate and use sentinel
 	./fetch --generate &gt; fetch.json
 	cat fetch.json
-else
-	cat bookmarks.json
 fi</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
@@ -476,7 +477,7 @@ We'll now try fetching your Pins automatically on first triggering.</string>
 		</dict>
 	</array>
 	<key>version</key>
-	<string>1.1</string>
+	<string>1.1.1</string>
 	<key>webaddress</key>
 	<string>https://github.com/mnadel/pinfred</string>
 </dict>
