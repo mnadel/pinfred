@@ -3,8 +3,10 @@
 import sys
 import json
 
-term = sys.argv[1]
+def matches(s):
+    return all([x in s for x in sys.argv[1:]])
+
 data = json.load(sys.stdin)
-filtered = [x for x in data["items"] if f"{term}" in x["match"]]
+filtered = [x for x in data["items"] if matches(x["match"])]
 
 print(json.dumps({"items": filtered}))
