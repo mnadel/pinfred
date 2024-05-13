@@ -66,9 +66,12 @@ items = DEFAULT_ITEMS
 for elem in tree:
     node = elem.attrib
 
+    print(node)
+
     url = node["href"]
     title = node["description"]
     tags = [x for x in node["tag"].split(" ") if len(x.strip()) > 0]
+    note = node["extended"]
 
     tag = " ".join([f"#{x}" for x in tags])
     subtitle = url if not tags else f"{tag} {url}"
@@ -81,7 +84,7 @@ for elem in tree:
         "title": title,
         "subtitle": subtitle,
         "arg": url,
-        "match": f"{url} {url_parts} {title} {tag}"
+        "match": f"{url} {url_parts} {title} {tag} {note}"
     })
 
 print(json.dumps({"items": items}))
