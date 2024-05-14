@@ -66,8 +66,6 @@ items = DEFAULT_ITEMS
 for elem in tree:
     node = elem.attrib
 
-    print(node)
-
     url = node["href"]
     title = node["description"]
     tags = [x for x in node["tag"].split(" ") if len(x.strip()) > 0]
