@@ -4,15 +4,17 @@ import re
 import os
 import sys
 import json
+import logging
 import datetime
 import urllib.request
 from urllib.parse import urlparse
 import xml.etree.ElementTree as ET
 
-def log(msg):
-    sys.stderr.write(msg)
-    sys.stderr.write("\n")
-    sys.stderr.flush()
+logger = logging.getLogger(__name__)
+logging.basicConfig(
+    stream=sys.stdout,
+    format='[%(asctime)s] %(levelname)s * %(message)s',
+    level=logging.DEBUG if os.getenv("DEBUG") else logging.ERROR)
 
 DATE_FORMAT = "%a %b %m %Y %-I:%M %p"
 if "DATE_FORMAT" in os.environ and os.environ["DATE_FORMAT"]:
@@ -48,7 +50,7 @@ if len(sys.argv) == 2 and sys.argv[1] == "--generate":
     sys.exit(0)
 
 if "PINBOARD_TOKEN" not in os.environ or not os.environ["PINBOARD_TOKEN"]:
-    log("missing auth token")
+    logging.error("missing auth token")
     sys.exit(1)
 
 token = os.environ["PINBOARD_TOKEN"]
@@ -58,13 +60,15 @@ try:
     with urllib.request.urlopen(url, timeout=10) as req:
         tree = ET.fromstring(req.read().decode("utf-8"))
 except urllib.error.HTTPError as e:
-    log(f"error fetching code={e.code}, url={url}, msg={e.read()}")
+    logging.error(f"error fetching code={e.code}, url={url}, msg={e.read()}")
     sys.exit(2)
 
 items = DEFAULT_ITEMS
 
 for elem in tree:
     node = elem.attrib
+
+    logging.debug(f"node={node}")
 
     url = node["href"]
     title = node["description"]
