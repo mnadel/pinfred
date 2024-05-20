@@ -302,7 +302,7 @@ fi</string>
 				<key>scriptfile</key>
 				<string></string>
 				<key>subtext</key>
-				<string></string>
+				<string>Filtering on: {var:filter_term}</string>
 				<key>title</key>
 				<string>Search your Pins...</string>
 				<key>type</key>
