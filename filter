@@ -7,11 +7,16 @@ import argparse
 parser = argparse.ArgumentParser(description="filter your pins")
 parser.add_argument("match", nargs="+", help="match strings")
 parser.add_argument("-v", "--invert", action="store_true", default=False, help="invert the match")
+parser.add_argument("-c", "--case-sensitive", action="store_true", default=False, help="case sensitive matching")
 
 args = parser.parse_args()
 
 def matches(s):
-    a = all([x.lower() in s.lower() for x in args.match])
+    if args.case_sensitive:
+        a = all([x in s for x in args.match])
+    else:
+        a = all([x.lower() in s.lower() for x in args.match])
+        
     return a if not args.invert else not a
 
 data = json.load(sys.stdin)
