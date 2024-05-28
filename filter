@@ -2,9 +2,17 @@
 
 import sys
 import json
+import argparse
+
+parser = argparse.ArgumentParser(description="filter your pins")
+parser.add_argument("match", nargs="+", help="match strings")
+parser.add_argument("-v", "--invert", action="store_true", default=False, help="invert the match")
+
+args = parser.parse_args()
 
 def matches(s):
-    return all([x in s for x in sys.argv[1:]])
+    a = all([x.lower() in s.lower() for x in args.match])
+    return a if not args.invert else not a
 
 data = json.load(sys.stdin)
 filtered = [x for x in data["items"] if matches(x["match"])]
