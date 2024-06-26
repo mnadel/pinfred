@@ -26,7 +26,7 @@ def index(cur, stream):
 
         CREATE VIRTUAL TABLE
         IF NOT EXISTS pins
-        USING FTS5(title, url, note, keywords)
+        USING FTS5(title, url, note, keywords);
     """)
 
     cur.executemany("""
@@ -34,10 +34,8 @@ def index(cur, stream):
         VALUES (?, ?, ?, ?)
     """, items)
 
-    cur.close()
-
 def exec_search(cur, query):
-    sql = f"""
+    sql = """
         SELECT title, url, note, keywords
         FROM pins
         WHERE
@@ -48,20 +46,12 @@ def exec_search(cur, query):
         ORDER BY RANK
     """
 
-    logging.debug("executing query: %s", sql)
+    logging.debug("executing query: %s", query)
 
-    matches = []
+    asitem = lambda row: {"title":row[0], "arg":row[1], "subtitle":row[2], "match":row[3]}
+
     rs = cur.execute(sql, (query, query, query, query))
-
-    for row in rs:
-        matches.append({
-            "title": row[0],
-            "subtitle": row[2],
-            "arg": row[1],
-            "match": row[3]
-        })
-
-    return matches
+    return [asitem(row) for row in rs]
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(
@@ -77,6 +67,8 @@ args = parser.parse_args()
 
 if args.index and args.query:
     parser.error("cannot index and search at the same time")
+elif not args.index and not args.query:
+    parser.error("query is required")
 
 with sqlite3.connect(DBNAME) as con:
     cur = con.cursor()
