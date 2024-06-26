@@ -26,7 +26,7 @@ def index(cur, stream):
 
         CREATE VIRTUAL TABLE
         IF NOT EXISTS pins
-        USING FTS5(title, url, note, keywords);
+        USING FTS5(title, url, note, keywords, tokenize="trigram");
     """)
 
     cur.executemany("""
@@ -35,14 +35,14 @@ def index(cur, stream):
     """, items)
 
 def exec_search(cur, query):
-    sql = """
+    sql = f"""
         SELECT title, url, note, keywords
         FROM pins
         WHERE
-            (title MATCH ?)
-            OR (url MATCH ?)
-            OR (note MATCH ?)
-            OR (keywords MATCH ?)
+            (title MATCH '{query}')
+            OR (url MATCH '{query}')
+            OR (note MATCH '{query}')
+            OR (keywords MATCH '{query}')
         ORDER BY RANK
     """
 
@@ -50,7 +50,7 @@ def exec_search(cur, query):
 
     asitem = lambda row: {"title":row[0], "arg":row[1], "subtitle":row[2], "match":row[3]}
 
-    rs = cur.execute(sql, (query, query, query, query))
+    rs = cur.execute(sql)
     return [asitem(row) for row in rs]
 
 logger = logging.getLogger(__name__)
