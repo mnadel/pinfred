@@ -17,6 +17,13 @@ DBNAME = "pins.sqlite3"
 def v(h, k):
     return h[k] if k in h else None
 
+# see https://sqlite.org/fts5.html
+def ftsify(query):
+    keywords = ["near", "and", "or", "not"]
+    for kw in keywords:
+        query = query.replace(kw, kw.upper())
+    return query
+
 def index(cur, stream):
     data = json.load(stream)
     items = [(v(x,"title"), v(x,"arg"), v(x,"subtitle"), v(x,"match")) for x in data["items"]]
@@ -34,24 +41,24 @@ def index(cur, stream):
         VALUES (?, ?, ?, ?)
     """, items)
 
-def exec_search(cur, query):
+def search(cur, query):
+    param = ftsify(query)
+
     sql = f"""
         SELECT title, url, note, keywords
         FROM pins
         WHERE
-            (title MATCH '{query}')
-            OR (url MATCH '{query}')
-            OR (note MATCH '{query}')
-            OR (keywords MATCH '{query}')
+            (title MATCH '{param}')
+            OR (url MATCH '{param}')
+            OR (note MATCH '{param}')
+            OR (keywords MATCH '{param}')
         ORDER BY RANK
     """
 
-    logging.debug("executing query: %s", query)
+    logging.debug("executing query: %s", sql)
 
-    asitem = lambda row: {"title":row[0], "arg":row[1], "subtitle":row[2], "match":row[3]}
-
-    rs = cur.execute(sql)
-    return [asitem(row) for row in rs]
+    asitem = lambda r: {"title":r[0], "arg":r[1], "subtitle":r[2], "match":r[3]}
+    return [asitem(row) for row in cur.execute(sql)]
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(
@@ -60,7 +67,7 @@ logging.basicConfig(
     level=logging.DEBUG if os.getenv("DEBUG") else logging.ERROR)
 
 parser = argparse.ArgumentParser(prog=basename(sys.argv[0]), description="full text search for pins")
-parser.add_argument("-i", "--index", default=False, action="store_true", help="create the index")
+parser.add_argument("-i", "--index", default=False, action="store_true", help="create the index from stdin")
 parser.add_argument("query", nargs="?")
 
 args = parser.parse_args()
@@ -85,4 +92,4 @@ with sqlite3.connect(DBNAME) as con:
             PRAGMA cache_size = -25000;
         """)
 
-        print(json.dumps({"items": exec_search(cur, args.query)}))
+        print(json.dumps({"items": search(cur, args.query)}))
