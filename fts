@@ -47,11 +47,7 @@ def search(cur, query):
     sql = f"""
         SELECT title, url, note, keywords
         FROM pins
-        WHERE
-            (title MATCH '{param}')
-            OR (url MATCH '{param}')
-            OR (note MATCH '{param}')
-            OR (keywords MATCH '{param}')
+        WHERE (title MATCH '{param}') OR (url MATCH '{param}') OR (note MATCH '{param}') OR (keywords MATCH '{param}')
         ORDER BY RANK
     """
 
@@ -83,7 +79,7 @@ with sqlite3.connect(DBNAME) as con:
     if args.index:
         index(cur, sys.stdin)
     else:
-        con.executescript("""
+        cur.executescript("""
         	PRAGMA query_only = on;
             PRAGMA synchronous = off;
             PRAGMA mmap_size = 250000000;
