@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-import re
 import os
 import sys
 import json
@@ -18,18 +17,13 @@ DBNAME = "pins.sqlite3"
 def v(h, k):
     return h[k] if k in h else None
 
-def assert_valid_query(query):
-    if any(c in ";" for c in query):
-        print("invalid query")
-        sys.exit(1)
-
-def index(con, stream):
+def index(cur, stream):
     data = json.load(stream)
     items = [(v(x,"title"), v(x,"arg"), v(x,"subtitle"), v(x,"match")) for x in data["items"]]
 
-    cur = con.cursor()
-    cur.execute("DROP TABLE IF EXISTS pins")
-    cur.execute("""
+    cur.executescript("""
+        DROP TABLE IF EXISTS pins;
+
         CREATE VIRTUAL TABLE
         IF NOT EXISTS pins
         USING FTS5(title, url, note, keywords)
@@ -42,21 +36,22 @@ def index(con, stream):
 
     cur.close()
 
-def exec_search(query):
+def exec_search(cur, query):
     sql = f"""
         SELECT title, url, note, keywords
         FROM pins
         WHERE
-            (title MATCH '{query}')
-            OR (url MATCH '{query}')
-            OR (note MATCH '{query}')
-            OR (keywords MATCH '{query}')
+            (title MATCH ?)
+            OR (url MATCH ?)
+            OR (note MATCH ?)
+            OR (keywords MATCH ?)
         ORDER BY RANK
     """
 
+    logging.debug("executing query: %s", sql)
+
     matches = []
-    cur = con.cursor()
-    rs = cur.execute(sql)
+    rs = cur.execute(sql, (query, query, query, query))
 
     for row in rs:
         matches.append({
@@ -80,10 +75,22 @@ parser.add_argument("query", nargs="?")
 
 args = parser.parse_args()
 
+if args.index and args.query:
+    parser.error("cannot index and search at the same time")
+
 with sqlite3.connect(DBNAME) as con:
+    cur = con.cursor()
+
     if args.index:
-        index(con, sys.stdin)
+        index(cur, sys.stdin)
     else:
-        query = " ".join(args.query)
-        assert_valid_query(query)
-        print(json.dumps({"items": exec_search(con, query)}))
+        con.executescript("""
+        	PRAGMA query_only = on;
+            PRAGMA synchronous = off;
+            PRAGMA mmap_size = 250000000;
+            PRAGMA temp_store = memory;
+            PRAGMA journal_mode = off;
+            PRAGMA cache_size = -25000;
+        """)
+
+        print(json.dumps({"items": exec_search(cur, args.query)}))
