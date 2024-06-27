@@ -12,21 +12,43 @@ from signal import signal, SIGINT, SIGPIPE, SIG_DFL as IGNORE
 signal(SIGINT, IGNORE)
 signal(SIGPIPE, IGNORE)
 
-DBNAME = "pins.sqlite3"
+class Cursor:
+    DBNAME = "pins.sqlite3"
+    
+    def __init__(self, ro=False):
+        self.ro = ro
 
-def v(h, k):
-    return h[k] if k in h else None
+    def __enter__(self):
+        self.con = sqlite3.connect(self.DBNAME)
+        self.cur = self.con.cursor()
 
-# see https://sqlite.org/fts5.html
+        if self.ro:
+            self.cur.executescript("""
+                PRAGMA query_only = on;
+                PRAGMA synchronous = off;
+                PRAGMA mmap_size = 250000000;
+                PRAGMA temp_store = memory;
+                PRAGMA journal_mode = off;
+                PRAGMA cache_size = -25000;
+            """)
+
+        return self.cur
+
+    def __exit__(self, _type, _val, _tb):
+        self.cur.close()
+        self.con.close()
+
 def ftsify(query):
+    # see https://sqlite.org/fts5.html
     keywords = ["near", "and", "or", "not"]
     for kw in keywords:
         query = query.replace(kw, kw.upper())
     return query
 
 def index(cur, stream):
+    g = lambda h, k: h[k] if k in h else None # safe access to dict
     data = json.load(stream)
-    items = [(v(x,"title"), v(x,"arg"), v(x,"subtitle"), v(x,"match")) for x in data["items"]]
+    items = [(g(x,"title"), g(x,"arg"), g(x,"subtitle"), g(x,"match")) for x in data["items"]]
 
     cur.executescript("""
         DROP TABLE IF EXISTS pins;
@@ -47,8 +69,12 @@ def search(cur, query):
     sql = f"""
         SELECT title, url, note, keywords
         FROM pins
-        WHERE (title MATCH '{param}') OR (url MATCH '{param}') OR (note MATCH '{param}') OR (keywords MATCH '{param}')
-        ORDER BY RANK
+        WHERE
+            (title MATCH '{param}')
+            OR (url MATCH '{param}')
+            OR (note MATCH '{param}')
+            OR (keywords MATCH '{param}')
+        ORDER BY RANK DESC
     """
 
     logging.debug("executing query: %s", sql)
@@ -72,20 +98,12 @@ if args.index and args.query:
     parser.error("cannot index and search at the same time")
 elif not args.index and not args.query:
     parser.error("query is required")
-
-with sqlite3.connect(DBNAME) as con:
-    cur = con.cursor()
-
-    if args.index:
+elif args.index:
+    with Cursor() as cur:
         index(cur, sys.stdin)
-    else:
-        cur.executescript("""
-        	PRAGMA query_only = on;
-            PRAGMA synchronous = off;
-            PRAGMA mmap_size = 250000000;
-            PRAGMA temp_store = memory;
-            PRAGMA journal_mode = off;
-            PRAGMA cache_size = -25000;
-        """)
-
-        print(json.dumps({"items": search(cur, args.query)}))
+elif args.query:
+    with Cursor(ro=True) as cur:
+        result = search(cur, args.query)
+        print(json.dumps({"items": result}))
+else:
+    parser.error("unknown operation")
