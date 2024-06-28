@@ -12,43 +12,14 @@ from signal import signal, SIGINT, SIGPIPE, SIG_DFL as IGNORE
 signal(SIGINT, IGNORE)
 signal(SIGPIPE, IGNORE)
 
-class Cursor:
-    DBNAME = "pins.sqlite3"
-    
-    def __init__(self, ro=False):
-        self.ro = ro
+DBNAME = "pins.sqlite3"
 
-    def __enter__(self):
-        self.con = sqlite3.connect(self.DBNAME)
-        self.cur = self.con.cursor()
-
-        if self.ro:
-            self.cur.executescript("""
-                PRAGMA query_only = on;
-                PRAGMA synchronous = off;
-                PRAGMA mmap_size = 250000000;
-                PRAGMA temp_store = memory;
-                PRAGMA journal_mode = off;
-                PRAGMA cache_size = -25000;
-            """)
-
-        return self.cur
-
-    def __exit__(self, _type, _val, _tb):
-        self.cur.close()
-        self.con.close()
-
-def ftsify(query):
-    # see https://sqlite.org/fts5.html
-    keywords = ["near", "and", "or", "not"]
-    for kw in keywords:
-        query = query.replace(kw, kw.upper())
-    return query
+def v(h, k):
+    return h[k] if k in h else None
 
 def index(cur, stream):
-    g = lambda h, k: h[k] if k in h else None # safe access to dict
     data = json.load(stream)
-    items = [(g(x,"title"), g(x,"arg"), g(x,"subtitle"), g(x,"match")) for x in data["items"]]
+    items = [(v(x,"title"), v(x,"arg"), v(x,"subtitle"), v(x,"match")) for x in data["items"]]
 
     cur.executescript("""
         DROP TABLE IF EXISTS pins;
@@ -63,23 +34,21 @@ def index(cur, stream):
         VALUES (?, ?, ?, ?)
     """, items)
 
-def search(cur, query):
-    param = ftsify(query)
-
+def exec_search(cur, query):
     sql = f"""
         SELECT title, url, note, keywords
         FROM pins
         WHERE
-            (title MATCH '{param}')
-            OR (url MATCH '{param}')
-            OR (note MATCH '{param}')
-            OR (keywords MATCH '{param}')
+            (title MATCH '{query}')
+            OR (url MATCH '{query}')
+            OR (note MATCH '{query}')
+            OR (keywords MATCH '{query}')
         ORDER BY RANK DESC
     """
 
-    logging.debug("executing query: %s", sql)
+    logging.debug("executing query: %s", query)
 
-    asitem = lambda r: {"title":r[0], "arg":r[1], "subtitle":r[2], "match":r[3]}
+    asitem = lambda row: {"title":row[0], "arg":row[1], "subtitle":row[2], "match":row[3]}
     return [asitem(row) for row in cur.execute(sql)]
 
 logger = logging.getLogger(__name__)
@@ -89,7 +58,7 @@ logging.basicConfig(
     level=logging.DEBUG if os.getenv("DEBUG") else logging.ERROR)
 
 parser = argparse.ArgumentParser(prog=basename(sys.argv[0]), description="full text search for pins")
-parser.add_argument("-i", "--index", default=False, action="store_true", help="create the index from stdin")
+parser.add_argument("-i", "--index", default=False, action="store_true", help="create the index")
 parser.add_argument("query", nargs="?")
 
 args = parser.parse_args()
@@ -98,12 +67,20 @@ if args.index and args.query:
     parser.error("cannot index and search at the same time")
 elif not args.index and not args.query:
     parser.error("query is required")
-elif args.index:
-    with Cursor() as cur:
+
+with sqlite3.connect(DBNAME) as con:
+    cur = con.cursor()
+
+    if args.index:
         index(cur, sys.stdin)
-elif args.query:
-    with Cursor(ro=True) as cur:
-        result = search(cur, args.query)
-        print(json.dumps({"items": result}))
-else:
-    parser.error("unknown operation")
+    else:
+        con.executescript("""
+        	PRAGMA query_only = on;
+            PRAGMA synchronous = off;
+            PRAGMA mmap_size = 250000000;
+            PRAGMA temp_store = memory;
+            PRAGMA journal_mode = off;
+            PRAGMA cache_size = -25000;
+        """)
+
+        print(json.dumps({"items": exec_search(cur, args.query)}))
