@@ -43,6 +43,7 @@ class Cursor:
         if self.write:
             self.con.commit()
             self.con.executescript("""
+                INSERT INTO pins(pins) VALUES('optimize');
                 PRAGMA optimize;
             """)
         self.con.close()
