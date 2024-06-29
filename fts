@@ -24,7 +24,7 @@ class Cursor:
         logging.debug("cpu count = %s", multiprocessing.cpu_count())
 
         self.con.executescript(f"""
-            PRAGMA threads = {multiprocessing.cpu_count() - 1};
+            PRAGMA threads = {max(1, multiprocessing.cpu_count() - 2)};
             PRAGMA mmap_size = {25 * 2**20};
             PRAGMA temp_store = memory;
             PRAGMA cache_size = -25000;
