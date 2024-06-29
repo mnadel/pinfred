@@ -25,7 +25,7 @@ class Cursor:
 
         self.con.executescript(f"""
             PRAGMA threads = {multiprocessing.cpu_count() - 1};
-            PRAGMA mmap_size = 250000000;
+            PRAGMA mmap_size = {25 * 2**20};
             PRAGMA temp_store = memory;
             PRAGMA cache_size = -25000;
         """)
@@ -41,10 +41,10 @@ class Cursor:
 
     def __exit__(self, _type, _value, _tb):
         if self.write:
+            self.con.commit()
             self.con.executescript("""
                 PRAGMA optimize;
             """)
-            self.con.commit()
         self.con.close()
 
 def index(cur, stream):
