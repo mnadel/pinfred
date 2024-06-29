@@ -14,6 +14,31 @@ signal(SIGPIPE, IGNORE)
 
 DBNAME = "pins.sqlite3"
 
+class Cursor:
+    def __init__(self, ro=False):
+        self.ro = ro
+
+    def __enter__(self):
+        self.con = sqlite3.connect("pins.sqlite3")
+        self.cur = self.con.cursor()
+
+        if self.ro:
+            self.con.executescript("""
+                PRAGMA query_only = on;
+                PRAGMA synchronous = off;
+                PRAGMA mmap_size = 250000000;
+                PRAGMA temp_store = memory;
+                PRAGMA journal_mode = off;
+                PRAGMA cache_size = -25000;
+            """)
+
+        return self.cur
+
+    def __exit__(self, _type, _value, _tb):
+        if not self.ro:
+            self.con.commit()
+        self.con.close()
+
 def v(h, k):
     return h[k] if k in h else None
 
@@ -67,20 +92,11 @@ if args.index and args.query:
     parser.error("cannot index and search at the same time")
 elif not args.index and not args.query:
     parser.error("query is required")
-
-with sqlite3.connect(DBNAME) as con:
-    cur = con.cursor()
-
-    if args.index:
+elif args.index:
+    with Cursor(ro=False) as cur:
         index(cur, sys.stdin)
-    else:
-        con.executescript("""
-        	PRAGMA query_only = on;
-            PRAGMA synchronous = off;
-            PRAGMA mmap_size = 250000000;
-            PRAGMA temp_store = memory;
-            PRAGMA journal_mode = off;
-            PRAGMA cache_size = -25000;
-        """)
-
+elif args.query:
+    with Cursor(ro=True) as cur:
         print(json.dumps({"items": exec_search(cur, args.query)}))
+else:
+    parser.error("invalid command")
