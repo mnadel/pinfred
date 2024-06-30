@@ -150,7 +150,7 @@
 				<key>runningsubtext</key>
 				<string></string>
 				<key>script</key>
-				<string>./fts "$1"</string>
+				<string>./fts -d ${cache_dir} "$1"</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
@@ -250,8 +250,8 @@
 				<key>runningsubtext</key>
 				<string></string>
 				<key>script</key>
-				<string>if [ -f bookmarks.json ]; then
-	cat bookmarks.json
+				<string>if [ -f ${cache_dir}/bookmarks.json ]; then
+	cat ${cache_dir}/bookmarks.json
 	exit 0
 fi
 
@@ -264,17 +264,18 @@ sleeps=0
 max_sleeps=8
 sleep_time=0.25
 
-while [ ! -f bookmarks.json ] &amp;&amp; [ ${sleeps} -lt ${max_sleeps} ]; then
+while [ ! -f ${cache_dir}/bookmarks.json ] &amp;&amp; [ ${sleeps} -lt ${max_sleeps} ]; then
 	sleep ${sleep_time}
 	((sleeps = sleeps + 1))
 done
 
-if [ -f bookmarks.json ]; then
-	cat bookmarks.json
+if [ -f ${cache_dir}/bookmarks.json ]; then
+	cat ${cache_dir}/bookmarks.json
 else
 	# if still no dice, generate and use sentinel
-	./fetch --generate &gt; fetch.json
-	cat fetch.json
+	mkdir -p ${cache_dir}
+	./fetch --generate &gt; ${cache_dir}/fetch.json
+	cat ${cache_dir}/fetch.json
 fi</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
@@ -295,6 +296,27 @@ fi</string>
 			<string>29FE8E28-6834-4FEC-AC57-26BE2C097FA2</string>
 			<key>version</key>
 			<integer>3</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>browser</key>
+				<string></string>
+				<key>skipqueryencode</key>
+				<false/>
+				<key>skipvarencode</key>
+				<false/>
+				<key>spaces</key>
+				<string></string>
+				<key>url</key>
+				<string>{query}</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.openurl</string>
+			<key>uid</key>
+			<string>C39FDE93-7F8A-4DF0-B317-6019C21CFB44</string>
+			<key>version</key>
+			<integer>1</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -324,7 +346,7 @@ fi</string>
 				<key>runningsubtext</key>
 				<string></string>
 				<key>script</key>
-				<string>cat bookmarks.json | ./filter ${filter_term}</string>
+				<string>cat ${cache_dir}/bookmarks.json | ./filter ${filter_term}</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
@@ -344,27 +366,6 @@ fi</string>
 			<string>4FDEF949-4E8C-45CF-8D23-65FF23CCD8A5</string>
 			<key>version</key>
 			<integer>3</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>browser</key>
-				<string></string>
-				<key>skipqueryencode</key>
-				<false/>
-				<key>skipvarencode</key>
-				<false/>
-				<key>spaces</key>
-				<string></string>
-				<key>url</key>
-				<string>{query}</string>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.action.openurl</string>
-			<key>uid</key>
-			<string>C39FDE93-7F8A-4DF0-B317-6019C21CFB44</string>
-			<key>version</key>
-			<integer>1</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -395,8 +396,9 @@ fi</string>
 				<key>escaping</key>
 				<integer>102</integer>
 				<key>script</key>
-				<string>./fetch &gt; bookmarks.json
-cat bookmarks.json | ./fts -i</string>
+				<string>mkdir -p ${cache_dir}
+./fetch &gt; ${cache_dir}/bookmarks.json
+cat ${cache_dir}/bookmarks.json | ./fts -i -d ${cache_dir}</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
@@ -451,6 +453,10 @@ cat bookmarks.json | ./fts -i</string>
 	</array>
 	<key>readme</key>
 	<string># Changelog
+
+## v1.5
+
+Store pins in a persistent cache.
 
 ## v1.4
 
@@ -672,9 +678,30 @@ We'll now try fetching your Pins automatically on first triggering.</string>
 			<key>variable</key>
 			<string>filter_term</string>
 		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>~/Library/Caches/org.nadel.pinfred</string>
+				<key>filtermode</key>
+				<integer>1</integer>
+				<key>placeholder</key>
+				<string></string>
+				<key>required</key>
+				<false/>
+			</dict>
+			<key>description</key>
+			<string></string>
+			<key>label</key>
+			<string>Location of cache</string>
+			<key>type</key>
+			<string>filepicker</string>
+			<key>variable</key>
+			<string>cache_dir</string>
+		</dict>
 	</array>
 	<key>version</key>
-	<string>1.4</string>
+	<string>1.5</string>
 	<key>webaddress</key>
 	<string>https://github.com/mnadel/pinfred</string>
 </dict>

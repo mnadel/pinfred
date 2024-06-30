@@ -14,11 +14,12 @@ signal(SIGINT, IGNORE)
 signal(SIGPIPE, IGNORE)
 
 class Cursor:
-    def __init__(self, write=False):
+    def __init__(self, cache=".", write=False):
+        self.cache = cache
         self.write = write
 
     def __enter__(self):
-        self.con = sqlite3.connect("pins.sqlite3")
+        self.con = sqlite3.connect(f"{self.cache}/pins.sqlite3")
         self.cur = self.con.cursor()
 
         logging.debug("cpu count = %s", multiprocessing.cpu_count())
@@ -94,6 +95,7 @@ logging.basicConfig(
 
 parser = argparse.ArgumentParser(prog=basename(sys.argv[0]), description="full text search for pins")
 parser.add_argument("-i", "--index", default=False, action="store_true", help="create the index")
+parser.add_argument("-d", "--cache-dir", default=".", help="location of the cache directory")
 parser.add_argument("query", nargs="?")
 
 args = parser.parse_args()
@@ -103,10 +105,10 @@ if args.index and args.query:
 elif not args.index and not args.query:
     parser.error("query is required")
 elif args.index:
-    with Cursor(write=True) as cur:
+    with Cursor(cache=args.cache_dir, write=True) as cur:
         index(cur, sys.stdin)
 elif args.query:
-    with Cursor() as cur:
+    with Cursor(cache=args.cache_dir) as cur:
         sql = ftsify(args.query)
         print(json.dumps({"items": search(cur, sql)}))
 else:
