@@ -150,7 +150,7 @@
 				<key>runningsubtext</key>
 				<string></string>
 				<key>script</key>
-				<string>./fts -d ${cache_dir} "$1"</string>
+				<string>./fts -d "${cache_dir}" "$1"</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
@@ -250,8 +250,8 @@
 				<key>runningsubtext</key>
 				<string></string>
 				<key>script</key>
-				<string>if [ -f ${cache_dir}/bookmarks.json ]; then
-	cat ${cache_dir}/bookmarks.json
+				<string>if [ -f "${cache_dir}/bookmarks.json" ]; then
+	cat "${cache_dir}/bookmarks.json"
 	exit 0
 fi
 
@@ -264,18 +264,18 @@ sleeps=0
 max_sleeps=8
 sleep_time=0.25
 
-while [ ! -f ${cache_dir}/bookmarks.json ] &amp;&amp; [ ${sleeps} -lt ${max_sleeps} ]; then
+while [ ! -f "${cache_dir}/bookmarks.json" ] &amp;&amp; [ ${sleeps} -lt ${max_sleeps} ]; then
 	sleep ${sleep_time}
 	((sleeps = sleeps + 1))
 done
 
-if [ -f ${cache_dir}/bookmarks.json ]; then
-	cat ${cache_dir}/bookmarks.json
+if [ -f "${cache_dir}/bookmarks.json" ]; then
+	cat "${cache_dir}/bookmarks.json"
 else
 	# if still no dice, generate and use sentinel
-	mkdir -p ${cache_dir}
-	./fetch --generate &gt; ${cache_dir}/fetch.json
-	cat ${cache_dir}/fetch.json
+	mkdir -p "${cache_dir}"
+	./fetch --generate &gt; "${cache_dir}/fetch.json"
+	cat "${cache_dir}/fetch.json"
 fi</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
@@ -346,7 +346,7 @@ fi</string>
 				<key>runningsubtext</key>
 				<string></string>
 				<key>script</key>
-				<string>cat ${cache_dir}/bookmarks.json | ./filter ${filter_term}</string>
+				<string>cat "${cache_dir}/bookmarks.json" | ./filter ${filter_term}</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
@@ -396,9 +396,9 @@ fi</string>
 				<key>escaping</key>
 				<integer>102</integer>
 				<key>script</key>
-				<string>mkdir -p ${cache_dir}
-./fetch &gt; ${cache_dir}/bookmarks.json
-cat ${cache_dir}/bookmarks.json | ./fts -i -d ${cache_dir}</string>
+				<string>mkdir -p "${cache_dir}"
+./fetch &gt; "${cache_dir}/bookmarks.json"
+cat "${cache_dir}/bookmarks.json" | ./fts -i -d "${cache_dir}"</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
