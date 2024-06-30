@@ -48,6 +48,12 @@ class Cursor:
             """)
         self.con.close()
 
+def ftsify(sql):
+    for t in ["near(", " and ", " or ", " not "]:
+        if t in sql:
+            sql = sql.replace(t, t.upper())
+    return sql
+
 def index(cur, stream):
     data = json.load(stream)
     v = lambda h, k: h[k] if k in h else None
@@ -101,6 +107,7 @@ elif args.index:
         index(cur, sys.stdin)
 elif args.query:
     with Cursor() as cur:
-        print(json.dumps({"items": search(cur, args.query)}))
+        sql = ftsify(args.query)
+        print(json.dumps({"items": search(cur, sql)}))
 else:
     parser.error("invalid command")
