@@ -7,7 +7,7 @@ import sqlite3
 import logging
 import argparse
 import multiprocessing
-from os.path import basename
+from os.path import basename, join
 from signal import signal, SIGINT, SIGPIPE, SIG_DFL as IGNORE
 
 signal(SIGINT, IGNORE)
@@ -15,44 +15,43 @@ signal(SIGPIPE, IGNORE)
 
 class Cursor:
     def __init__(self, cache=".", write=False):
-        self.cache = cache
-        self.write = write
+        self._db = join(cache, "pins.sqlite3")
+        self._write = write
 
     def __enter__(self):
-        self.con = sqlite3.connect(f"{self.cache}/pins.sqlite3")
-        self.cur = self.con.cursor()
+        self._con = sqlite3.connect(self._db)
+        self._cur = self._con.cursor()
 
-        logging.debug("cpu count = %s", multiprocessing.cpu_count())
-
-        self.con.executescript(f"""
+        self._cur.executescript(f"""
             PRAGMA threads = {max(1, multiprocessing.cpu_count() - 2)};
             PRAGMA mmap_size = {25 * 2**20};
             PRAGMA temp_store = memory;
             PRAGMA cache_size = -25000;
         """)
 
-        if not self.write:
-            self.con.executescript("""
+        if not self._write:
+            self._cur.executescript("""
                 PRAGMA query_only = on;
                 PRAGMA synchronous = off;
                 PRAGMA journal_mode = off;
             """)
 
-        return self.cur
+        return self._cur
 
     def __exit__(self, _type, _value, _tb):
-        if self.write:
-            self.con.commit()
-            self.con.executescript("""
+        if self._write:
+            self._con.commit()
+            self._con.executescript("""
                 INSERT INTO pins(pins) VALUES('optimize');
                 PRAGMA optimize;
             """)
-        self.con.close()
+        self._con.close()
 
 def ftsify(sql):
-    for t in ["near(", " and ", " or ", " not "]:
-        if t in sql:
-            sql = sql.replace(t, t.upper())
+    # fts case-insensitive keywords
+    for tok in ["near (", "near(", " and ", " or ", " not "]:
+        if tok in sql:
+            sql = sql.replace(tok, tok.upper())
     return sql
 
 def index(cur, stream):
