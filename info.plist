@@ -21,19 +21,6 @@
 				<false/>
 			</dict>
 		</array>
-		<key>361321FA-4559-474D-A840-C322741C4F8F</key>
-		<array>
-			<dict>
-				<key>destinationuid</key>
-				<string>5B530577-97D6-4560-BA49-B0C405AED2F8</string>
-				<key>modifiers</key>
-				<integer>0</integer>
-				<key>modifiersubtext</key>
-				<string></string>
-				<key>vitoclose</key>
-				<false/>
-			</dict>
-		</array>
 		<key>4FDEF949-4E8C-45CF-8D23-65FF23CCD8A5</key>
 		<array>
 			<dict>
@@ -98,6 +85,59 @@
 				<false/>
 			</dict>
 		</array>
+		<key>8DC8E0E5-2070-4C1C-AEDE-8A043DEFF651</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>5B530577-97D6-4560-BA49-B0C405AED2F8</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>sourceoutputuid</key>
+				<string>3E475409-17E2-46DA-8F5A-6D9FF62A5963</string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>A8427EEE-9787-48DC-9482-E747453A1606</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>sourceoutputuid</key>
+				<string>89F7A57B-863C-4E40-BDDC-8CF1F7B522D5</string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>A8427EEE-9787-48DC-9482-E747453A1606</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>CA990FFB-1A84-4CBA-A42D-05731119C84B</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>AFAA6AB9-5CED-48DF-9CE4-6AD00F90D6F8</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>8DC8E0E5-2070-4C1C-AEDE-8A043DEFF651</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
 		<key>ED618719-6E1D-430F-8FE7-A59EB07736DA</key>
 		<array>
 			<dict>
@@ -150,7 +190,7 @@
 				<key>runningsubtext</key>
 				<string></string>
 				<key>script</key>
-				<string>./fts -d "${cache_dir}" "$1"</string>
+				<string>./fts "$1"</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
@@ -250,8 +290,8 @@
 				<key>runningsubtext</key>
 				<string></string>
 				<key>script</key>
-				<string>if [ -f "${cache_dir}/bookmarks.json" ]; then
-	cat "${cache_dir}/bookmarks.json"
+				<string>if [ -f bookmarks.json ]; then
+	cat bookmarks.json
 	exit 0
 fi
 
@@ -264,18 +304,17 @@ sleeps=0
 max_sleeps=8
 sleep_time=0.25
 
-while [ ! -f "${cache_dir}/bookmarks.json" ] &amp;&amp; [ ${sleeps} -lt ${max_sleeps} ]; then
+while [ ! -f bookmarks.json ] &amp;&amp; [ ${sleeps} -lt ${max_sleeps} ]; then
 	sleep ${sleep_time}
 	((sleeps = sleeps + 1))
 done
 
-if [ -f "${cache_dir}/bookmarks.json" ]; then
-	cat "${cache_dir}/bookmarks.json"
+if [ -f bookmarks.json ]; then
+	cat bookmarks.json
 else
 	# if still no dice, generate and use sentinel
-	mkdir -p "${cache_dir}"
-	./fetch --generate &gt; "${cache_dir}/fetch.json"
-	cat "${cache_dir}/fetch.json"
+	./fetch --generate &gt; fetch.json
+	cat fetch.json
 fi</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
@@ -296,27 +335,6 @@ fi</string>
 			<string>29FE8E28-6834-4FEC-AC57-26BE2C097FA2</string>
 			<key>version</key>
 			<integer>3</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>browser</key>
-				<string></string>
-				<key>skipqueryencode</key>
-				<false/>
-				<key>skipvarencode</key>
-				<false/>
-				<key>spaces</key>
-				<string></string>
-				<key>url</key>
-				<string>{query}</string>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.action.openurl</string>
-			<key>uid</key>
-			<string>C39FDE93-7F8A-4DF0-B317-6019C21CFB44</string>
-			<key>version</key>
-			<integer>1</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -346,7 +364,7 @@ fi</string>
 				<key>runningsubtext</key>
 				<string></string>
 				<key>script</key>
-				<string>cat "${cache_dir}/bookmarks.json" | ./filter ${filter_term}</string>
+				<string>cat bookmarks.json | ./filter ${filter_term}</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
@@ -370,21 +388,21 @@ fi</string>
 		<dict>
 			<key>config</key>
 			<dict>
-				<key>argumenttype</key>
-				<integer>2</integer>
-				<key>keyword</key>
-				<string>{var:keyword_refresh}</string>
-				<key>subtext</key>
+				<key>browser</key>
 				<string></string>
-				<key>text</key>
-				<string>Refresh your Pins</string>
-				<key>withspace</key>
+				<key>skipqueryencode</key>
 				<false/>
+				<key>skipvarencode</key>
+				<false/>
+				<key>spaces</key>
+				<string></string>
+				<key>url</key>
+				<string>{query}</string>
 			</dict>
 			<key>type</key>
-			<string>alfred.workflow.input.keyword</string>
+			<string>alfred.workflow.action.openurl</string>
 			<key>uid</key>
-			<string>361321FA-4559-474D-A840-C322741C4F8F</string>
+			<string>C39FDE93-7F8A-4DF0-B317-6019C21CFB44</string>
 			<key>version</key>
 			<integer>1</integer>
 		</dict>
@@ -396,9 +414,8 @@ fi</string>
 				<key>escaping</key>
 				<integer>102</integer>
 				<key>script</key>
-				<string>mkdir -p "${cache_dir}"
-./fetch &gt; "${cache_dir}/bookmarks.json"
-cat "${cache_dir}/bookmarks.json" | ./fts -i -d "${cache_dir}"</string>
+				<string>./fetch &gt; bookmarks.json
+cat bookmarks.json | ./fts -i</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
@@ -412,6 +429,37 @@ cat "${cache_dir}/bookmarks.json" | ./fts -i -d "${cache_dir}"</string>
 			<string>D5285D37-4758-4EE9-85B7-1C364E71D4D7</string>
 			<key>version</key>
 			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argumenttrimmode</key>
+				<integer>0</integer>
+				<key>argumenttype</key>
+				<integer>1</integer>
+				<key>fixedorder</key>
+				<false/>
+				<key>items</key>
+				<string>[{"title":"Refresh","arg":"refresh","subtitle":"Refresh your Pins"},{"title":"Debug","arg":"debug","subtitle":"Show debug info"}]</string>
+				<key>keyword</key>
+				<string>:pin</string>
+				<key>matchmode</key>
+				<integer>0</integer>
+				<key>runningsubtext</key>
+				<string></string>
+				<key>subtext</key>
+				<string></string>
+				<key>title</key>
+				<string>Pinboard Utilities</string>
+				<key>withspace</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.listfilter</string>
+			<key>uid</key>
+			<string>AFAA6AB9-5CED-48DF-9CE4-6AD00F90D6F8</string>
+			<key>version</key>
+			<integer>1</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -438,6 +486,52 @@ cat "${cache_dir}/bookmarks.json" | ./fts -i -d "${cache_dir}"</string>
 		<dict>
 			<key>config</key>
 			<dict>
+				<key>conditions</key>
+				<array>
+					<dict>
+						<key>inputstring</key>
+						<string></string>
+						<key>matchcasesensitive</key>
+						<false/>
+						<key>matchmode</key>
+						<integer>0</integer>
+						<key>matchstring</key>
+						<string>refresh</string>
+						<key>outputlabel</key>
+						<string>Refresh</string>
+						<key>uid</key>
+						<string>3E475409-17E2-46DA-8F5A-6D9FF62A5963</string>
+					</dict>
+					<dict>
+						<key>inputstring</key>
+						<string></string>
+						<key>matchcasesensitive</key>
+						<false/>
+						<key>matchmode</key>
+						<integer>0</integer>
+						<key>matchstring</key>
+						<string>debug</string>
+						<key>outputlabel</key>
+						<string>Debug</string>
+						<key>uid</key>
+						<string>89F7A57B-863C-4E40-BDDC-8CF1F7B522D5</string>
+					</dict>
+				</array>
+				<key>elselabel</key>
+				<string>else</string>
+				<key>hideelse</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.conditional</string>
+			<key>uid</key>
+			<string>8DC8E0E5-2070-4C1C-AEDE-8A043DEFF651</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
 				<key>availableviaurlhandler</key>
 				<false/>
 				<key>triggerid</key>
@@ -450,13 +544,65 @@ cat "${cache_dir}/bookmarks.json" | ./fts -i -d "${cache_dir}"</string>
 			<key>version</key>
 			<integer>1</integer>
 		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>cat bookmarks.json | jq '.items[] | select(.title == "Last Refresh")'</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>11</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>A8427EEE-9787-48DC-9482-E747453A1606</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>behaviour</key>
+				<integer>0</integer>
+				<key>fontmode</key>
+				<integer>0</integer>
+				<key>fontsizing</key>
+				<integer>0</integer>
+				<key>footertext</key>
+				<string></string>
+				<key>inputfile</key>
+				<string></string>
+				<key>inputtype</key>
+				<integer>0</integer>
+				<key>loadingtext</key>
+				<string></string>
+				<key>outputmode</key>
+				<integer>0</integer>
+				<key>scriptinput</key>
+				<integer>0</integer>
+				<key>spellchecking</key>
+				<integer>0</integer>
+				<key>stackview</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.userinterface.text</string>
+			<key>uid</key>
+			<string>CA990FFB-1A84-4CBA-A42D-05731119C84B</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
 	</array>
 	<key>readme</key>
 	<string># Changelog
-
-## v1.5
-
-Store pins in a persistent cache.
 
 ## v1.4
 
@@ -486,13 +632,6 @@ We'll now try fetching your Pins automatically on first triggering.</string>
 			<key>ypos</key>
 			<real>170</real>
 		</dict>
-		<key>361321FA-4559-474D-A840-C322741C4F8F</key>
-		<dict>
-			<key>xpos</key>
-			<real>225</real>
-			<key>ypos</key>
-			<real>420</real>
-		</dict>
 		<key>4FDEF949-4E8C-45CF-8D23-65FF23CCD8A5</key>
 		<dict>
 			<key>xpos</key>
@@ -517,16 +656,37 @@ We'll now try fetching your Pins automatically on first triggering.</string>
 		<key>5B530577-97D6-4560-BA49-B0C405AED2F8</key>
 		<dict>
 			<key>xpos</key>
-			<real>425</real>
+			<real>750</real>
 			<key>ypos</key>
-			<real>525</real>
+			<real>445</real>
 		</dict>
 		<key>665937E4-4EF7-460A-A446-E2F97BA380C1</key>
 		<dict>
 			<key>xpos</key>
+			<real>555</real>
+			<key>ypos</key>
+			<real>520</real>
+		</dict>
+		<key>8DC8E0E5-2070-4C1C-AEDE-8A043DEFF651</key>
+		<dict>
+			<key>xpos</key>
+			<real>420</real>
+			<key>ypos</key>
+			<real>450</real>
+		</dict>
+		<key>A8427EEE-9787-48DC-9482-E747453A1606</key>
+		<dict>
+			<key>xpos</key>
+			<real>550</real>
+			<key>ypos</key>
+			<real>655</real>
+		</dict>
+		<key>AFAA6AB9-5CED-48DF-9CE4-6AD00F90D6F8</key>
+		<dict>
+			<key>xpos</key>
 			<real>230</real>
 			<key>ypos</key>
-			<real>570</real>
+			<real>430</real>
 		</dict>
 		<key>C39FDE93-7F8A-4DF0-B317-6019C21CFB44</key>
 		<dict>
@@ -535,12 +695,19 @@ We'll now try fetching your Pins automatically on first triggering.</string>
 			<key>ypos</key>
 			<real>290</real>
 		</dict>
+		<key>CA990FFB-1A84-4CBA-A42D-05731119C84B</key>
+		<dict>
+			<key>xpos</key>
+			<real>765</real>
+			<key>ypos</key>
+			<real>655</real>
+		</dict>
 		<key>D5285D37-4758-4EE9-85B7-1C364E71D4D7</key>
 		<dict>
 			<key>xpos</key>
-			<real>550</real>
+			<real>855</real>
 			<key>ypos</key>
-			<real>495</real>
+			<real>415</real>
 		</dict>
 		<key>ED618719-6E1D-430F-8FE7-A59EB07736DA</key>
 		<dict>
@@ -678,30 +845,9 @@ We'll now try fetching your Pins automatically on first triggering.</string>
 			<key>variable</key>
 			<string>filter_term</string>
 		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>default</key>
-				<string>~/Library/Caches/org.nadel.pinfred</string>
-				<key>filtermode</key>
-				<integer>1</integer>
-				<key>placeholder</key>
-				<string></string>
-				<key>required</key>
-				<false/>
-			</dict>
-			<key>description</key>
-			<string></string>
-			<key>label</key>
-			<string>Location of cache</string>
-			<key>type</key>
-			<string>filepicker</string>
-			<key>variable</key>
-			<string>cache_dir</string>
-		</dict>
 	</array>
 	<key>version</key>
-	<string>1.5</string>
+	<string>1.4</string>
 	<key>webaddress</key>
 	<string>https://github.com/mnadel/pinfred</string>
 </dict>
