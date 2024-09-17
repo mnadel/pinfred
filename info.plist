@@ -290,8 +290,8 @@
 				<key>runningsubtext</key>
 				<string></string>
 				<key>script</key>
-				<string>if [ -f bookmarks.json ]; then
-	cat bookmarks.json
+				<string>if [ -f ${alfred_workflow_data}/bookmarks.json ]; then
+	cat ${alfred_workflow_data}/bookmarks.json
 	exit 0
 fi
 
@@ -304,13 +304,13 @@ sleeps=0
 max_sleeps=8
 sleep_time=0.25
 
-while [ ! -f bookmarks.json ] &amp;&amp; [ ${sleeps} -lt ${max_sleeps} ]; then
+while [ ! -f ${alfred_workflow_data}/bookmarks.json ] &amp;&amp; [ ${sleeps} -lt ${max_sleeps} ]; then
 	sleep ${sleep_time}
 	((sleeps = sleeps + 1))
 done
 
-if [ -f bookmarks.json ]; then
-	cat bookmarks.json
+if [ -f ${alfred_workflow_data}/bookmarks.json ]; then
+	cat ${alfred_workflow_data}/bookmarks.json
 else
 	# if still no dice, generate and use sentinel
 	./fetch --generate &gt; fetch.json
@@ -414,8 +414,12 @@ fi</string>
 				<key>escaping</key>
 				<integer>102</integer>
 				<key>script</key>
-				<string>./fetch &gt; bookmarks.json
-cat bookmarks.json | ./fts -i</string>
+				<string>if [ ! -d "${alfred_workflow_data}" ]; then
+	mkdir -p "${alfred_workflow_data}"
+fi
+
+./fetch &gt; "${alfred_workflow_data}/bookmarks.json"
+cat "${alfred_workflow_data}/bookmarks.json" | ./fts -i</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
@@ -552,7 +556,7 @@ cat bookmarks.json | ./fts -i</string>
 				<key>escaping</key>
 				<integer>102</integer>
 				<key>script</key>
-				<string>cat bookmarks.json | jq '.items[] | select(.title == "Last Refresh")'</string>
+				<string>cat "${alfred_workflow_data}/bookmarks.json" | jq '.items[] | select(.title == "Last Refresh")'</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
