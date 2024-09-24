@@ -556,7 +556,8 @@ cat "${alfred_workflow_data}/bookmarks.json" | ./fts -i</string>
 				<key>escaping</key>
 				<integer>102</integer>
 				<key>script</key>
-				<string>cat "${alfred_workflow_data}/bookmarks.json" | jq '.items[] | select(.title == "Last Refresh")'</string>
+				<string>cat "${alfred_workflow_data}/bookmarks.json" | jq '.items[] | select(.title == "Last Refresh")'
+echo Data dir: ${alfred_workflow_data}</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
