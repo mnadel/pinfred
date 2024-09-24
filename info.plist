@@ -364,7 +364,7 @@ fi</string>
 				<key>runningsubtext</key>
 				<string></string>
 				<key>script</key>
-				<string>cat bookmarks.json | ./filter ${filter_term}</string>
+				<string>cat ${alfred_workflow_data}/bookmarks.json | ./filter ${filter_term}</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
